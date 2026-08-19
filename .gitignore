@@ -1,0 +1,34 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# ML artifacts
+*.joblib
+server/ml/saved_models/*.joblib
+server/ml/saved_models/metrics.json
+server/ml/saved_models/preprocess_config.json
+
+# Dataset
+data/*.csv
+data/*.zip
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

@@ -1,0 +1,22 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ML artifacts (regenerate with train_model.py)
+ml/saved_models/*.joblib
+ml/saved_models/metrics.json
+ml/saved_models/preprocess_config.json
+
+# Dataset (large; re-download with train_model.py)
+data/

@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-950 text-slate-200 font-sans antialiased;
+  background-image:
+    radial-gradient(60rem 60rem at 110% -10%, rgba(99, 102, 241, 0.08), transparent),
+    radial-gradient(50rem 50rem at -20% 110%, rgba(16, 185, 129, 0.06), transparent);
+  background-attachment: fixed;
+}
+
+/* Subtle scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+@layer components {
+  .panel {
+    @apply bg-slate-900/70 border border-slate-800 rounded-2xl backdrop-blur-sm;
+  }
+  .panel-hover {
+    @apply transition-all duration-200 hover:border-slate-700 hover:bg-slate-900;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5
+      text-sm font-semibold text-white transition-all duration-200
+      hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed
+      focus:outline-none focus:ring-2 focus:ring-indigo-500/50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700
+      px-5 py-2.5 text-sm font-medium text-slate-300 transition-all duration-200
+      hover:bg-slate-800 hover:text-white disabled:opacity-50;
+  }
+  .input {
+    @apply w-full rounded-xl border border-slate-700 bg-slate-900/70 px-3.5 py-2.5 text-sm
+      text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2
+      focus:ring-indigo-500/50 focus:border-indigo-500/60 transition-colors;
+  }
+  .label {
+    @apply block text-xs font-medium uppercase tracking-wider text-slate-400 mb-1.5;
+  }
+  .kbd-chip {
+    @apply inline-flex items-center rounded-md bg-slate-800/80 border border-slate-700
+      px-2 py-0.5 text-[11px] font-medium text-slate-300;
+  }
+}
+
+/* Highlight suspicious keywords in result */
+mark.suspect {
+  @apply bg-amber-500/25 text-amber-200 rounded px-0.5;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up {
+  animation: fadeUp 0.35s ease-out both;
+}
+
+@keyframes scanline {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-scan {
+  animation: scanline 1.4s linear infinite;
+}
