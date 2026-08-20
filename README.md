@@ -1,370 +1,782 @@
-# SpamGuard AI
+# 🛡️ SpamGuard AI
 
 ### Intelligent Email Spam, Phishing & Threat Analyzer
 
-A production-style, full-stack AI/ML cybersecurity platform that analyzes emails
-and produces a complete security report: **SAFE / SPAM / POSSIBLE PHISHING**, a
-confidence score, an explainable risk score (0–100), threat indicators, URL
-analysis, email statistics, an AI-generated explanation, and a recommended action.
+SpamGuard AI is a **production-style full-stack AI/ML cybersecurity platform** that analyzes emails and generates a comprehensive security report.
 
-The classification is performed by a **real trained machine-learning model** —
-not hardcoded rules. A **hybrid AI architecture** combines scikit-learn ML,
-rule-based phishing detection, URL heuristics, and the **Mistral API** as an
-intelligent explanation layer.
+It classifies emails as:
 
----
+* 🟢 **SAFE**
+* 🟠 **SPAM**
+* 🔴 **POSSIBLE PHISHING**
 
-## Table of Contents
+The platform provides a **confidence score, explainable risk score (0–100), phishing indicators, URL analysis, email statistics, AI-generated explanations, and recommended security actions**.
 
-1. [Features](#features)
-2. [Architecture](#architecture)
-3. [AI / ML pipeline](#ai--ml-pipeline)
-4. [Why both ML and Mistral?](#why-both-ml-and-mistral)
-5. [Tech stack](#tech-stack)
-6. [Project structure](#project-structure)
-7. [Dataset](#dataset)
-8. [Model training](#model-training)
-9. [Evaluation](#evaluation)
-10. [Environment variables](#environment-variables)
-11. [Installation](#installation)
-12. [MongoDB setup](#mongodb-setup)
-13. [Mistral API setup](#mistral-api-setup)
-14. [API documentation](#api-documentation)
-15. [Example API response](#example-api-response)
-16. [Security considerations](#security-considerations)
-17. [Testing](#testing)
-18. [Future improvements](#future-improvements)
+The primary classification is performed using a **real trained Machine Learning model**, not hardcoded rules. A hybrid architecture combines:
+
+* Scikit-learn Machine Learning
+* NLP and TF-IDF
+* Rule-based phishing detection
+* URL security heuristics
+* Mistral AI for intelligent explanations
+* MongoDB for scan history and analytics
 
 ---
 
-## Features
+## ✨ Features
 
-- ✅ **Real ML classification** — Multinomial Naive Bayes, Logistic Regression,
-  Linear SVM, and Random Forest are trained and compared; the best is deployed.
-- ✅ **NLP preprocessing pipeline** — HTML removal, lowercasing, URL/email
-  stripping, number normalization, tokenization, stop-word removal, TF-IDF.
-- ✅ **Phishing detection layer** — 15+ rule-based indicators (urgency, account
-  suspension, credential requests, fake verification, prize scams, social
-  engineering, sender patterns…).
-- ✅ **URL analyzer** — extracts URLs and flags IP-address hosts, shorteners,
-  encoded characters, `@` tricks, risky TLDs, suspicious domains.
-- ✅ **Mistral AI** — summary, explanation, threat analysis, recommendation
-  (with graceful degradation when the API is unavailable).
-- ✅ **Explainable risk scoring** — transparent 0–100 score with a per-component
-  breakdown (LOW / MEDIUM / HIGH / CRITICAL).
-- ✅ **Email upload** — `.txt` and `.eml` (safe parsing, no attachment execution).
-- ✅ **MongoDB** persistence for scan history + analytics.
-- ✅ **PDF security report** download.
-- ✅ **Professional dark cybersecurity dashboard** (React + Tailwind + Recharts).
-- ✅ **REST API** with Pydantic validation and consistent response envelopes.
-- ✅ **Security** — CORS, rate limiting, file validation, prompt-injection
-  protection, secrets only in `.env`, no stack traces to clients.
+### 🤖 Machine Learning
+
+* Real ML-based email classification
+* Trains and compares multiple algorithms:
+
+  * Multinomial Naive Bayes
+  * Logistic Regression
+  * Linear SVM
+  * Random Forest
+* Automatically selects the best model based on **F1 Score**
+* Production model: **Linear SVM**
+
+### 🧠 NLP Pipeline
+
+The email text goes through a complete preprocessing pipeline:
+
+* HTML removal
+* Lowercasing
+* URL removal
+* Email-address removal
+* Number normalization
+* Tokenization
+* Stop-word removal
+* TF-IDF vectorization
+
+### 🎣 Phishing Detection
+
+The system detects **15+ phishing and social-engineering indicators**, including:
+
+* Urgent language
+* Account suspension threats
+* Credential requests
+* Fake verification requests
+* Password requests
+* Prize/reward scams
+* Suspicious sender patterns
+* Social engineering techniques
+* Account termination threats
+
+### 🔗 URL Analysis
+
+URLs inside emails are automatically extracted and analyzed for:
+
+* IP-address-based URLs
+* HTTP instead of HTTPS
+* URL shorteners
+* Suspicious domains
+* Risky TLDs
+* Encoded characters
+* `@` tricks
+* URL obfuscation
+
+### 🤝 Mistral AI
+
+Mistral AI works as an **explanation and reasoning layer**.
+
+It generates:
+
+* Email summary
+* Security explanation
+* Threat analysis
+* Recommended action
+
+The Mistral layer is optional. If the API is unavailable, the ML classification and security analysis continue to work normally.
+
+### 📊 Explainable Risk Score
+
+Every email receives a **0–100 risk score**.
+
+|  Score | Risk Level |
+| -----: | ---------- |
+|   0–24 | LOW        |
+|  25–49 | MEDIUM     |
+|  50–74 | HIGH       |
+| 75–100 | CRITICAL   |
+
+The score includes a transparent breakdown of contributing factors such as:
+
+* ML spam probability
+* Phishing indicators
+* Suspicious URLs
+* Suspicious keywords
+
+### 📧 Email Analysis
+
+Supports:
+
+* Pasted email content
+* `.txt` files
+* `.eml` files
+
+Uploaded emails are safely parsed and attachments are **never executed**.
+
+### 🗄️ MongoDB Persistence
+
+Stores:
+
+* Scan history
+* Classification results
+* Risk scores
+* Threat indicators
+* AI analysis
+* Analytics data
+
+If MongoDB is unavailable, the application can fall back to an in-memory store.
+
+### 📄 PDF Security Reports
+
+Users can download a detailed **PDF security report** for analyzed emails.
+
+### 🎨 Cybersecurity Dashboard
+
+Modern dark-themed dashboard built with:
+
+* React
+* Tailwind CSS
+* Recharts
+* Lucide React
+
+Includes:
+
+* Dashboard
+* Email Analyzer
+* Results
+* Scan History
+* Analytics
+* Model Performance
+
+### 🔐 Security
+
+Security features include:
+
+* CORS protection
+* Rate limiting
+* File validation
+* File-size limits
+* Prompt-injection protection
+* Environment-based secrets
+* Sanitized API errors
+* Safe `.eml` parsing
+* No attachment execution
+* Pydantic request validation
 
 ---
 
-## Architecture
+# 🏗️ Architecture
 
+```text
+                         ┌─────────────────────────────┐
+                         │        React Frontend       │
+                         │  Dashboard / Analyzer /     │
+                         │  History / Analytics        │
+                         └──────────────┬──────────────┘
+                                        │
+                                        ▼
+                         ┌─────────────────────────────┐
+                         │        FastAPI Backend      │
+                         │                             │
+                         │ Routes → Controllers →      │
+                         │ Services                    │
+                         └──────────────┬──────────────┘
+                                        │
+                    ┌───────────────────┼───────────────────┐
+                    │                   │                   │
+                    ▼                   ▼                   ▼
+             ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+             │ ML Pipeline │    │ Phishing &  │    │ URL Analyzer│
+             │             │    │ Risk Engine │    │             │
+             │ TF-IDF      │    │             │    │ URL Heuristics│
+             │ Linear SVM  │    │ Indicators  │    │             │
+             └──────┬──────┘    └──────┬──────┘    └──────┬──────┘
+                    │                  │                  │
+                    └──────────────────┼──────────────────┘
+                                       │
+                                       ▼
+                         ┌─────────────────────────────┐
+                         │       Mistral AI Layer      │
+                         │                             │
+                         │ Summary / Explanation /     │
+                         │ Threat Analysis / Advice    │
+                         └──────────────┬──────────────┘
+                                        │
+                                        ▼
+                         ┌─────────────────────────────┐
+                         │          MongoDB             │
+                         │   Scan History / Analytics  │
+                         └─────────────────────────────┘
 ```
-                          ┌──────────────────────────────┐
-   Paste email / upload   │         FastAPI  (REST)       │
-   .txt / .eml  ────────▶ │                              │
-                          │  routes → controllers →       │
-                          │  services                     │
-                          └──────┬───────────┬───────────┘
-                                 │           │
-              ┌──────────────────▼──┐   ┌────▼───────────────────┐
-              │   ML pipeline        │   │  Rule-based layers      │
-              │  (scikit-learn)      │   │  • phishing indicators  │
-              │  TF-IDF → classifier │   │  • URL analyzer         │
-              └──────────────────┬───┘   │  • keyword detector     │
-                                 │       │  • risk scoring         │
-                                 │       └────────────────────────┘
-              ┌──────────────────▼───────────────┐
-              │  Mistral AI (explanation layer)   │  ← optional, degrades gracefully
-              └──────────────────┬───────────────┘
-                                 │
-              ┌──────────────────▼───────────────┐
-              │  MongoDB  (scan history)          │  ← falls back to in-memory
-              └──────────────────────────────────┘
-                                 │
-                          ┌──────▼───────┐
-                          │ React SPA    │  dashboard / analyzer / result /
-                          │ (Tailwind,   │  history / analytics / model
-                          │  Recharts)   │  performance
-                          └──────────────┘
+
+---
+
+# 🧠 AI / ML Pipeline
+
+```text
+Email
+  │
+  ▼
+Text Preprocessing
+  │
+  ├── HTML Removal
+  ├── Lowercasing
+  ├── URL Removal
+  ├── Email Removal
+  ├── Number Normalization
+  ├── Tokenization
+  └── Stop-word Removal
+  │
+  ▼
+TF-IDF Vectorization
+  │
+  ▼
+ML Classifier
+  │
+  ├── SAFE
+  └── SPAM
+  │
+  ▼
+Phishing Detection
+  │
+  ├── Urgency
+  ├── Account threats
+  ├── Credential requests
+  ├── Social engineering
+  └── Suspicious sender patterns
+  │
+  ▼
+URL Analysis
+  │
+  ├── IP Address
+  ├── Shorteners
+  ├── HTTP/HTTPS
+  ├── Obfuscation
+  └── Suspicious domains
+  │
+  ▼
+Risk Scoring
+  │
+  ▼
+Mistral AI
+  │
+  ├── Summary
+  ├── Explanation
+  ├── Threat Analysis
+  └── Recommendation
+  │
+  ▼
+Final Security Report
 ```
 
 ---
 
-## AI / ML pipeline
+# 🤔 Why Both ML and Mistral AI?
 
-```
- Email
-   │
-   ▼
- Text preprocessing ── lowercasing, HTML removal, URL/email stripping,
- │                     number normalization, tokenization, stop-word removal
- ▼
- TF-IDF vectorization (shared vectorizer, fitted on training data only)
- │
- ▼
- ML classifier ── SAFE / SPAM (+ calibrated spam probability)
- │
- ▼
- Rule-based phishing analysis ── structured threat indicators
- │
- ▼
- URL analysis ── protocol, domain, IP-address, shortener, obfuscation checks
- │
- ▼
- Suspicious keyword detection ── supporting indicators only
- │
- ▼
- Risk scoring ── transparent 0-100 score with per-component breakdown
- │
- ▼
- Mistral API ── summary, explanation, threat analysis, recommendation
- │
- ▼
- Final security report  ── stored in MongoDB, rendered by the React app
-```
+The project intentionally separates **classification** from **AI explanation**.
 
----
+### Machine Learning
 
-## Why both ML and Mistral?
+The ML model is the primary classifier because it provides:
 
-- **The ML model is the primary classifier.** It provides a deterministic,
-  reproducible, *measurable* decision (accuracy / precision / recall / F1 on a
-  held-out test set). It is fast, free, and does not depend on external services.
-- **Mistral is the reasoning/explanation layer.** An LLM cannot be trusted as the
-  sole classifier (hallucination risk, non-determinism, cost, latency), but it
-  excels at *explaining* a decision in plain English, summarizing an email, and
-  drafting a practical recommendation.
+* Deterministic predictions
+* Measurable performance
+* Accuracy
+* Precision
+* Recall
+* F1 Score
+* Fast inference
+* No dependency on an external AI service
 
-The two are kept **strictly separated** in the UI and API: the ML classification,
-the rule-based indicators, and the Mistral explanation are distinct fields. If
-Mistral fails or no API key is configured, the ML result and indicators are still
-returned — the system degrades gracefully instead of breaking.
+### Mistral AI
+
+Mistral is used as an explanation layer because an LLM is useful for:
+
+* Explaining why an email appears suspicious
+* Summarizing email content
+* Describing potential threats
+* Providing practical recommendations
+
+The LLM is **not used as the primary classifier**.
+
+This prevents the entire security decision from depending on LLM hallucinations or external API availability.
+
+If Mistral is unavailable, the application still returns:
+
+* ML classification
+* Confidence
+* Risk score
+* Phishing indicators
+* URL analysis
+* Suspicious keywords
 
 ---
 
-## Tech stack
+# 🛠️ Tech Stack
 
-| Layer        | Technology |
-|--------------|-----------|
-| Frontend     | React 18, Vite, Tailwind CSS, React Router, Recharts, Lucide React, Axios |
-| Backend      | FastAPI, Uvicorn, Pydantic, python-multipart |
-| ML / NLP     | scikit-learn, pandas, NumPy, NLTK, joblib |
-| AI           | Mistral API (chat completions) |
-| Database     | MongoDB (PyMongo) |
-| PDF          | ReportLab |
-| Testing      | pytest, pytest-asyncio, FastAPI TestClient |
+| Layer           | Technologies                 |
+| --------------- | ---------------------------- |
+| Frontend        | React 18, Vite, Tailwind CSS |
+| Routing         | React Router                 |
+| Charts          | Recharts                     |
+| Icons           | Lucide React                 |
+| HTTP Client     | Axios                        |
+| Backend         | FastAPI, Uvicorn             |
+| Validation      | Pydantic                     |
+| ML              | Scikit-learn                 |
+| NLP             | NLTK, TF-IDF                 |
+| Data Processing | Pandas, NumPy                |
+| Model Storage   | Joblib                       |
+| AI              | Mistral API                  |
+| Database        | MongoDB, PyMongo             |
+| PDF             | ReportLab                    |
+| Testing         | Pytest, Pytest-Asyncio       |
+| API Testing     | FastAPI TestClient           |
 
 ---
 
-## Project structure
+# 📁 Project Structure
 
-```
+```text
 SpamGuard-AI/
-├── client/                       # React frontend
+│
+├── client/
 │   ├── src/
-│   │   ├── components/           # Sidebar, TopNav, badges, gauge, cards…
-│   │   ├── pages/                # Dashboard, Analyzer, Result, History,
-│   │   │                         #   Analytics, ModelPerformance
-│   │   ├── services/             # axios client, sample emails
-│   │   ├── hooks/                # useApi
-│   │   ├── utils/                # formatting, risk/color maps
+│   │   ├── components/
+│   │   │   ├── Sidebar
+│   │   │   ├── TopNav
+│   │   │   ├── RiskGauge
+│   │   │   ├── Badges
+│   │   │   └── Cards
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── Dashboard
+│   │   │   ├── Analyzer
+│   │   │   ├── Result
+│   │   │   ├── History
+│   │   │   ├── Analytics
+│   │   │   └── ModelPerformance
+│   │   │
+│   │   ├── services/
+│   │   ├── hooks/
+│   │   ├── utils/
 │   │   └── App.jsx
-│   ├── vite.config.js            # dev proxy /api → localhost:8000
+│   │
+│   ├── vite.config.js
 │   ├── tailwind.config.js
 │   └── .env.example
 │
-├── server/                       # FastAPI backend
+├── server/
 │   ├── app/
-│   │   ├── main.py               # app entry, CORS, error handlers, SPA serving
-│   │   ├── config.py             # pydantic-settings (.env)
-│   │   ├── routes/               # analyze, history, meta (analytics/model/health)
-│   │   ├── controllers/          # orchestration (analysis pipeline)
-│   │   ├── services/             # ML, phishing, url, risk, stats, keywords,
-│   │   │                         #   email_parser, ai, storage, pdf
-│   │   ├── schemas/              # Pydantic request/response models
-│   │   ├── ai/                   # Mistral client + prompt safety
-│   │   ├── security/             # rate limiter
-│   │   └── utils/                # exceptions, response envelope, logging
-│   ├── ml/                       # standalone ML package
-│   │   ├── train_model.py        # training + evaluation + artifact saving
-│   │   ├── preprocess.py         # shared NLP preprocessing
-│   │   ├── predict.py            # model loading + inference
-│   │   └── saved_models/         # model.joblib, vectorizer.joblib, metrics.json
-│   ├── tests/                    # ML, API, and security tests
+│   │   ├── main.py
+│   │   ├── config.py
+│   │   │
+│   │   ├── routes/
+│   │   │   ├── analyze
+│   │   │   ├── history
+│   │   │   └── meta
+│   │   │
+│   │   ├── controllers/
+│   │   │
+│   │   ├── services/
+│   │   │   ├── ml
+│   │   │   ├── phishing
+│   │   │   ├── url
+│   │   │   ├── risk
+│   │   │   ├── statistics
+│   │   │   ├── keywords
+│   │   │   ├── email_parser
+│   │   │   ├── ai
+│   │   │   ├── storage
+│   │   │   └── pdf
+│   │   │
+│   │   ├── schemas/
+│   │   ├── ai/
+│   │   ├── security/
+│   │   └── utils/
+│   │
+│   ├── ml/
+│   │   ├── train_model.py
+│   │   ├── preprocess.py
+│   │   ├── predict.py
+│   │   └── saved_models/
+│   │       ├── model.joblib
+│   │       ├── vectorizer.joblib
+│   │       ├── preprocess_config.json
+│   │       └── metrics.json
+│   │
+│   ├── tests/
 │   ├── requirements.txt
 │   ├── .env.example
 │   └── .gitignore
 │
-├── data/                         # dataset (gitignored, auto-downloadable)
+├── data/
+│   └── enron_spam_data.csv
+│
 ├── README.md
 └── .gitignore
 ```
 
 ---
 
-## Dataset
+# 📚 Dataset
 
-The training pipeline uses the **Enron-Spam** public corpus
-(Metsis, Androutsopoulos & Paliouras, 2006), consolidated into a single CSV
-(~33,700 real emails — 17,171 spam / 16,545 ham).
+SpamGuard AI uses the **Enron-Spam public email corpus** for training.
 
-`train_model.py` will automatically download and extract the dataset if
-`data/enron_spam_data.csv` is not present.
+The dataset contains approximately:
+
+* **33,700 emails**
+* **17,171 spam emails**
+* **16,545 legitimate (ham) emails**
+
+The training script automatically downloads and prepares the dataset if it is not already available.
+
+Dataset reference:
+
+> Metsis, V., Androutsopoulos, I., & Paliouras, G. (2006). Spam filtering with Naive Bayes — Which Naive Bayes?
 
 ---
 
-## Model training
+# 🧪 Model Training
+
+Navigate to the backend:
 
 ```bash
 cd server
-python3 -m pip install -r requirements.txt
-python3 -m nltk.downloader stopwords punkt
+```
 
-# Train all four models, evaluate, and save the best
+Install dependencies:
+
+```bash
+python3 -m pip install -r requirements.txt
+```
+
+Download required NLTK resources:
+
+```bash
+python3 -m nltk.downloader stopwords punkt
+```
+
+Train the models:
+
+```bash
 python3 ml/train_model.py
 ```
 
-The script loads the dataset, cleans it, combines subject + body, preprocesses
-the text, splits train/test (80/20, stratified), fits a shared TF-IDF vectorizer,
-trains and evaluates four classifiers, selects the best by F1 score, and saves:
+The training pipeline:
 
-- `saved_models/model.joblib` — the winning model
-- `saved_models/vectorizer.joblib` — the TF-IDF vectorizer
-- `saved_models/preprocess_config.json` — preprocessing/vectorizer configuration
-- `saved_models/metrics.json` — full evaluation metrics for all models
+1. Loads the dataset
+2. Cleans email content
+3. Combines subject and body
+4. Applies NLP preprocessing
+5. Splits data into training and testing sets
+6. Fits the TF-IDF vectorizer on training data
+7. Trains four ML models
+8. Evaluates every model
+9. Selects the best model using F1 Score
+10. Saves the production model and evaluation metrics
 
----
+Generated artifacts:
 
-## Evaluation
-
-Measured on a held-out test set of ~6,100 emails:
-
-| Model                    | Accuracy | Precision | Recall | F1     |
-|--------------------------|----------|-----------|--------|--------|
-| **Linear SVM** ✅        | 99.13%   | 98.94%    | 99.25% | 99.09% |
-| Logistic Regression      | 98.92%   | 98.24%    | 99.52% | 98.88% |
-| Multinomial Naive Bayes  | 98.49%   | 98.36%    | 98.49% | 98.42% |
-| Random Forest            | 98.28%   | 97.63%    | 98.80% | 98.21% |
-
-**Linear SVM** is selected as the production model. Full per-model confusion
-matrices are available on the **Model Performance** page and via
-`GET /api/model-info`.
-
----
-
-## Environment variables
-
-### Backend (`server/.env`)
-
-Copy `server/.env.example` to `server/.env`:
-
+```text
+server/ml/saved_models/
+├── model.joblib
+├── vectorizer.joblib
+├── preprocess_config.json
+└── metrics.json
 ```
-MISTRAL_API_KEY=your_mistral_api_key_here   # optional — AI layer degrades gracefully
+
+---
+
+# 📊 Model Evaluation
+
+The models are evaluated on a held-out test set of approximately **6,100 emails**.
+
+| Model                   |   Accuracy |  Precision |     Recall |         F1 |
+| ----------------------- | ---------: | ---------: | ---------: | ---------: |
+| **Linear SVM 🏆**       | **99.13%** | **98.94%** | **99.25%** | **99.09%** |
+| Logistic Regression     |     98.92% |     98.24% |     99.52% |     98.88% |
+| Multinomial Naive Bayes |     98.49% |     98.36% |     98.49% |     98.42% |
+| Random Forest           |     98.28% |     97.63% |     98.80% |     98.21% |
+
+### Production Model
+
+**Linear SVM** was selected because it achieved the highest F1 score.
+
+The complete evaluation metrics and confusion matrices are available through the application's **Model Performance** page and:
+
+```text
+GET /api/model-info
+```
+
+---
+
+# 🔐 Environment Variables
+
+## Backend
+
+Create:
+
+```text
+server/.env
+```
+
+Example:
+
+```env
+MISTRAL_API_KEY=your_mistral_api_key
 MISTRAL_MODEL=mistral-small-latest
+
 MONGODB_URI=mongodb://localhost:27017/spamguard
+
 PORT=8000
 CLIENT_URL=http://localhost:5173
+
 MAX_FILE_SIZE_MB=5
 ```
 
-### Frontend (`client/.env`)
+### Important
 
-```
-VITE_API_BASE_URL=/api   # never put backend secrets here
-```
+Never commit `.env` to GitHub.
 
-> ⚠️ The Mistral API key lives **only** in the backend `.env`. It is never sent
-> to the browser and must never appear in frontend code.
+The Mistral API key must remain **only on the backend**.
 
 ---
 
-## Installation
+## Frontend
 
-### 1. Backend
+Create:
+
+```text
+client/.env
+```
+
+Example:
+
+```env
+VITE_API_BASE_URL=/api
+```
+
+Never place backend secrets or API keys inside frontend environment variables.
+
+---
+
+# 🚀 Installation & Setup
+
+## 1. Clone the Repository
+
+```bash
+git clone <your-repository-url>
+cd SpamGuard-AI
+```
+
+---
+
+## 2. Backend Setup
+
+Open the server directory:
 
 ```bash
 cd server
-python3 -m venv .venv && source .venv/bin/activate
+```
+
+Create a virtual environment:
+
+### Linux / macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### Windows
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
-python3 -m nltk.downloader stopwords punkt
-cp .env.example .env          # then fill in your values
-python3 ml/train_model.py     # train + save the model (one time)
+```
+
+Download NLTK resources:
+
+```bash
+python -m nltk.downloader stopwords punkt
+```
+
+Create the environment file:
+
+```bash
+cp .env.example .env
+```
+
+On Windows, you can simply copy `.env.example` and rename it to `.env`.
+
+Add your configuration values.
+
+Train the model:
+
+```bash
+python ml/train_model.py
+```
+
+Start the backend:
+
+```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-### 2. Frontend (development)
+Backend:
+
+```text
+http://localhost:8000
+```
+
+Swagger API documentation:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+# 💻 Frontend Setup
+
+Open a new terminal:
 
 ```bash
 cd client
+```
+
+Install dependencies:
+
+```bash
 npm install
-npm run dev                   # http://localhost:5173 (proxies /api → :8000)
 ```
 
-### 3. Frontend (production — served by FastAPI)
+Start the development server:
 
 ```bash
-cd client && npm run build    # outputs client/dist
-# FastAPI automatically serves client/dist when present
-cd ../server && uvicorn app.main:app --port 8000
-# open http://localhost:8000
+npm run dev
+```
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+The Vite development server proxies:
+
+```text
+/api → http://localhost:8000
 ```
 
 ---
 
-## MongoDB setup
+# 🗄️ MongoDB Setup
 
-Install and run MongoDB (any local instance works):
+SpamGuard AI uses MongoDB to store scan history and analytics.
+
+You can use either:
+
+* Local MongoDB
+* MongoDB Atlas
+* Docker
+
+### Docker Example
 
 ```bash
-# e.g. with Docker
-docker run -d -p 27017:27017 --name spamguard-mongo mongo:7
-
-# or a local install
-mongod --dbpath /path/to/data
+docker run -d \
+  -p 27017:27017 \
+  --name spamguard-mongo \
+  mongo:7
 ```
 
-The backend connects using `MONGODB_URI`. **If MongoDB is unreachable, the app
-falls back to an in-memory store** and logs a warning — everything keeps working.
+The default connection string is:
+
+```text
+mongodb://localhost:27017/spamguard
+```
+
+If MongoDB is unavailable, the application can fall back to an in-memory storage mechanism so that email analysis can continue.
 
 ---
 
-## Mistral API setup
+# 🤖 Mistral AI Setup
 
-1. Create an account at [console.mistral.ai](https://console.mistral.ai).
+Mistral AI is optional.
+
+1. Create a Mistral account.
 2. Generate an API key.
-3. Add it to `server/.env` as `MISTRAL_API_KEY=…`.
-4. (Optional) set `MISTRAL_MODEL` (default `mistral-small-latest`).
+3. Add the key to `server/.env`.
 
-If the key is missing or invalid, the ML classification and rule-based analysis
-are still returned with a note that the AI explanation is temporarily unavailable.
+Example:
 
----
+```env
+MISTRAL_API_KEY=your_api_key_here
+MISTRAL_MODEL=mistral-small-latest
+```
 
-## API documentation
+If the API key is missing or invalid, SpamGuard AI still provides:
 
-Interactive docs (Swagger UI) are at `http://localhost:8000/docs`.
+* ML classification
+* Spam probability
+* Risk score
+* Phishing indicators
+* URL analysis
+* Suspicious keywords
 
-| Method | Endpoint                  | Description |
-|--------|---------------------------|-------------|
-| POST   | `/api/analyze`            | Analyze a pasted email (`{subject, sender, body}`) |
-| POST   | `/api/analyze/upload`     | Analyze an uploaded `.txt` / `.eml` file (multipart) |
-| GET    | `/api/history`            | Scan history (`?limit&skip&classification&search`) |
-| GET    | `/api/history/{id}`       | Get a specific scan |
-| DELETE | `/api/history/{id}`       | Delete a scan |
-| GET    | `/api/history/{id}/report`| Download PDF security report |
-| GET    | `/api/analytics`          | Dashboard analytics |
-| GET    | `/api/model-info`         | Model name + evaluation metrics |
-| GET    | `/api/health`             | Health check |
+Only the AI-generated explanation layer becomes unavailable.
 
 ---
 
-## Example API response
+# 📡 API Documentation
+
+Swagger UI:
+
+```text
+http://localhost:8000/docs
+```
+
+## Endpoints
+
+| Method | Endpoint                   | Description                   |
+| ------ | -------------------------- | ----------------------------- |
+| POST   | `/api/analyze`             | Analyze a pasted email        |
+| POST   | `/api/analyze/upload`      | Analyze `.txt` / `.eml` file  |
+| GET    | `/api/history`             | Get scan history              |
+| GET    | `/api/history/{id}`        | Get specific scan             |
+| DELETE | `/api/history/{id}`        | Delete scan                   |
+| GET    | `/api/history/{id}/report` | Download PDF report           |
+| GET    | `/api/analytics`           | Dashboard analytics           |
+| GET    | `/api/model-info`          | Model information and metrics |
+| GET    | `/api/health`              | Backend health check          |
+
+---
+
+# 📥 Example API Request
+
+```json
+{
+  "subject": "Urgent: Verify Your Account",
+  "sender": "security@example.com",
+  "body": "Your account will be suspended. Please verify your password immediately by clicking the link below."
+}
+```
+
+---
+
+# 📤 Example API Response
 
 ```json
 {
@@ -378,13 +790,33 @@ Interactive docs (Swagger UI) are at `http://localhost:8000/docs`.
     "phishing_probability": 0.95,
     "risk_score": 96,
     "risk_level": "CRITICAL",
+
     "risk_breakdown": [
-      { "component": "ML spam probability", "points": 49.98, "detail": "..." },
-      { "component": "Phishing indicators", "points": 25.0, "detail": "..." },
-      { "component": "Suspicious URLs", "points": 15.0, "detail": "..." },
-      { "component": "Suspicious keywords", "points": 7.8, "detail": "..." }
+      {
+        "component": "ML spam probability",
+        "points": 49.98
+      },
+      {
+        "component": "Phishing indicators",
+        "points": 25.0
+      },
+      {
+        "component": "Suspicious URLs",
+        "points": 15.0
+      },
+      {
+        "component": "Suspicious keywords",
+        "points": 7.8
+      }
     ],
-    "suspicious_keywords": ["suspended", "urgent", "verify", "password"],
+
+    "suspicious_keywords": [
+      "suspended",
+      "urgent",
+      "verify",
+      "password"
+    ],
+
     "threat_indicators": [
       {
         "indicator": "Account suspension threat",
@@ -393,17 +825,33 @@ Interactive docs (Swagger UI) are at `http://localhost:8000/docs`.
         "description": "Threatens that an account will be suspended, locked or terminated."
       }
     ],
+
     "urls": [
-      { "url": "http://83.102.44.9/verify", "domain": "83.102.44.9",
-        "protocol": "http", "is_https": false, "severity": "HIGH",
-        "risk_indicators": [{ "indicator": "IP-address URL", "severity": "HIGH", "description": "…" }] }
+      {
+        "url": "http://83.102.44.9/verify",
+        "domain": "83.102.44.9",
+        "protocol": "http",
+        "is_https": false,
+        "severity": "HIGH"
+      }
     ],
-    "statistics": { "word_count": 48, "url_count": 1, "has_html": false, "…": "…" },
-    "ai_analysis": {
-      "available": true, "provider": "mistral",
-      "summary": "…", "explanation": "…", "threat_analysis": "…"
+
+    "statistics": {
+      "word_count": 48,
+      "url_count": 1,
+      "has_html": false
     },
-    "recommendation": "Do not click any links or provide personal information…",
+
+    "ai_analysis": {
+      "available": true,
+      "provider": "mistral",
+      "summary": "The email contains multiple indicators of a potential phishing attempt.",
+      "explanation": "The message uses urgency and account suspension language to pressure the recipient.",
+      "threat_analysis": "The included URL and credential request increase the security risk."
+    },
+
+    "recommendation": "Do not click any links or provide personal information.",
+
     "model_name": "Linear SVM"
   }
 }
@@ -411,52 +859,189 @@ Interactive docs (Swagger UI) are at `http://localhost:8000/docs`.
 
 ---
 
-## Security considerations
+# 🔒 Security Considerations
 
-- **Secrets** are loaded from `.env` only; `.env` is gitignored, `.env.example`
-  holds safe placeholders. No API keys or credentials in source code or frontend.
-- **Prompt-injection protection** — email content is wrapped in a controlled
-  prompt that instructs Mistral to treat it as *untrusted data* and ignore any
-  instructions inside it.
-- **Untrusted email handling** — uploaded `.eml` files are parsed with the
-  standard-library email parser; attachments are counted but never executed or
-  opened; embedded scripts are not run.
-- **Input validation** — Pydantic schemas, file extension/MIME checks, and a
-  configurable size limit (`MAX_FILE_SIZE_MB`).
-- **Secure errors** — global exception handlers return sanitized messages; stack
-  traces and secrets are never exposed to clients.
-- **CORS** restricted to the configured client origin.
-- **Rate limiting** — a lightweight in-memory sliding-window limiter on analysis.
-- **Cautious language** — URLs/indicators are described as *suspicious* /
-  *potentially unsafe* / *possible phishing* rather than asserted malicious.
+SpamGuard AI was designed with security in mind.
+
+### Secret Management
+
+* API keys are stored in `.env`
+* `.env` is excluded from Git
+* Secrets are never exposed to the frontend
+
+### Prompt Injection Protection
+
+Email content is treated as **untrusted input**.
+
+The Mistral prompt explicitly instructs the model to:
+
+* Treat email content as data
+* Ignore instructions contained inside the email
+* Never follow commands embedded in analyzed content
+
+### Safe Email Parsing
+
+`.eml` files are processed using Python's standard email parser.
+
+Attachments are:
+
+* Counted
+* Not executed
+* Not opened as executable content
+
+### Input Validation
+
+The backend validates:
+
+* Request schemas
+* File extensions
+* MIME types
+* File sizes
+* Empty files
+* Malformed email files
+
+### Secure Error Handling
+
+The API returns sanitized error messages instead of exposing:
+
+* Stack traces
+* Internal paths
+* Secrets
+* Implementation details
+
+### CORS
+
+CORS is restricted to the configured frontend origin.
+
+### Rate Limiting
+
+Analysis endpoints use a lightweight in-memory sliding-window rate limiter to reduce abuse.
 
 ---
 
-## Testing
+# 🧪 Testing
+
+Run the complete test suite:
 
 ```bash
 cd server
-python3 -m pytest tests/ -v
+python -m pytest tests/ -v
 ```
 
 Tests cover:
 
-- **ML** — preprocessing (lowercase/HTML/stop-words), model loading, prediction.
-- **API** — health, analyze, upload, history CRUD, model-info, analytics, PDF.
-- **Security** — invalid extension, empty file, oversized file, malformed `.eml`,
-  prompt-injection attempts.
+### ML Tests
 
-Mistral is **mocked** in tests — no real API calls are made.
+* Text preprocessing
+* HTML removal
+* Lowercasing
+* Stop-word removal
+* Model loading
+* Prediction
+
+### API Tests
+
+* Health endpoint
+* Email analysis
+* File upload
+* History CRUD
+* Model information
+* Analytics
+* PDF reports
+
+### Security Tests
+
+* Invalid file extensions
+* Empty files
+* Oversized files
+* Malformed `.eml` files
+* Prompt-injection attempts
+
+Mistral API calls are mocked during testing, so tests do not require a real API key.
 
 ---
 
-## Future improvements
+# 🚀 Production Deployment
 
-- Persist TF-IDF vocabulary metadata + model card for reproducibility.
-- Docker Compose for one-command local startup (Mongo + backend + frontend).
-- External URL reputation lookups (VirusTotal / Google Safe Browsing) as an
-  optional configured provider.
-- User accounts / authentication and per-user scan history.
-- Scheduled model retraining and drift monitoring.
-- Streaming LLM responses for faster perceived latency.
+The application can be deployed as separate frontend and backend services.
+
+### Recommended Architecture
+
+```text
+                    Internet
+                       │
+          ┌────────────┴────────────┐
+          │                         │
+          ▼                         ▼
+      Vercel                    Hugging Face
+      Frontend                    Backend
+      React/Vite                  FastAPI
+          │                         │
+          └────────────┬────────────┘
+                       │
+                       ▼
+                  MongoDB Atlas
+                       │
+                       ▼
+                   Mistral API
 ```
+
+The frontend can be deployed on **Vercel**, while the FastAPI ML backend can be deployed on **Hugging Face Spaces** or another Python-compatible hosting platform.
+
+---
+
+# 🔮 Future Improvements
+
+Planned improvements include:
+
+* [ ] Docker Compose one-command deployment
+* [ ] Persistent TF-IDF vocabulary metadata
+* [ ] Complete ML model card
+* [ ] External URL reputation services
+* [ ] VirusTotal integration
+* [ ] Google Safe Browsing integration
+* [ ] User authentication
+* [ ] Per-user scan history
+* [ ] Scheduled model retraining
+* [ ] ML drift monitoring
+* [ ] Streaming Mistral responses
+* [ ] Advanced sender reputation analysis
+* [ ] Real-time threat intelligence integration
+
+---
+
+# ⚠️ Disclaimer
+
+SpamGuard AI is a cybersecurity analysis tool designed to identify **potential spam and phishing indicators**.
+
+A classification such as `SAFE` does not guarantee that an email is completely harmless, and a `POSSIBLE PHISHING` result does not independently prove malicious intent.
+
+Users should always exercise caution when interacting with unexpected emails, links, attachments, or requests for sensitive information.
+
+---
+
+# 👨‍💻 Project Highlights
+
+SpamGuard AI demonstrates practical experience with:
+
+* Machine Learning
+* Natural Language Processing
+* Cybersecurity
+* Phishing Detection
+* Explainable AI
+* LLM Integration
+* FastAPI
+* React
+* REST APIs
+* MongoDB
+* Model Evaluation
+* Secure File Processing
+* Prompt Injection Protection
+* PDF Report Generation
+* Full-Stack Application Development
+
+---
+
+## ⭐ If You Like This Project
+
+If SpamGuard AI helped you understand AI/ML, cybersecurity, or full-stack development, consider giving the repository a ⭐ on GitHub.

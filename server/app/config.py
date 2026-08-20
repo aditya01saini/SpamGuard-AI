@@ -5,7 +5,7 @@ All secrets and environment-specific settings are read from environment
 variables / a `.env` file (never hardcoded). See `.env.example` for the full
 list of supported variables.
 """
-
+import os
 from __future__ import annotations
 
 from functools import lru_cache
@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     mongodb_db_name: str = "spamguard"
 
     # --- Server ---
-    port: int = 8000
+    port: int = int(os.getenv("PORT", "8000"))   
     client_url: str = "http://localhost:5173"
     host: str = "0.0.0.0"
 

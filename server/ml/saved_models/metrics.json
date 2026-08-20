@@ -1,0 +1,87 @@
+{
+  "best_model": "Linear SVM",
+  "trained_at": "2026-08-19T17:14:44.068846+00:00Z",
+  "models": [
+    {
+      "model": "Multinomial Naive Bayes",
+      "accuracy": 0.9849155599278571,
+      "precision": 0.983567271482369,
+      "recall": 0.984916009598903,
+      "f1_score": 0.9842411784857829,
+      "confusion_matrix": [
+        [
+          3134,
+          48
+        ],
+        [
+          44,
+          2873
+        ]
+      ],
+      "train_seconds": 0.03
+    },
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.9891785538612887,
+      "precision": 0.9824027072758037,
+      "recall": 0.9952005485087418,
+      "f1_score": 0.9887602179836512,
+      "confusion_matrix": [
+        [
+          3130,
+          52
+        ],
+        [
+          14,
+          2903
+        ]
+      ],
+      "train_seconds": 1.36
+    },
+    {
+      "model": "Linear SVM",
+      "accuracy": 0.9913100508280046,
+      "precision": 0.9894053315105946,
+      "recall": 0.9924580047994515,
+      "f1_score": 0.9909293171316105,
+      "confusion_matrix": [
+        [
+          3151,
+          31
+        ],
+        [
+          22,
+          2895
+        ]
+      ],
+      "train_seconds": 0.61
+    },
+    {
+      "model": "Random Forest",
+      "accuracy": 0.9827840629611412,
+      "precision": 0.9762872628726287,
+      "recall": 0.9880013712718546,
+      "f1_score": 0.982109388311467,
+      "confusion_matrix": [
+        [
+          3112,
+          70
+        ],
+        [
+          35,
+          2882
+        ]
+      ],
+      "train_seconds": 26.44
+    }
+  ],
+  "dataset": {
+    "name": "Enron-Spam (Metsis, Androutsopoulos & Paliouras)",
+    "source": "https://github.com/MWiechmann/enron_spam_data/raw/master/enron_spam_data.zip",
+    "rows": 30493,
+    "spam": 14583,
+    "ham": 15910,
+    "test_size": 0.2,
+    "random_state": 42
+  }
+}

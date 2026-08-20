@@ -1,0 +1,32 @@
+{
+  "preprocessing": {
+    "lowercase": true,
+    "strip_html": true,
+    "strip_urls": true,
+    "normalize_numbers": true,
+    "remove_stopwords": true,
+    "stemming": false,
+    "subject_weight": 2,
+    "tokenizer": "nltk.word_tokenize (regex fallback)"
+  },
+  "vectorizer": {
+    "max_features": 15000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "sublinear_tf": true
+  },
+  "best_model": "Linear SVM",
+  "dataset": {
+    "name": "Enron-Spam (Metsis, Androutsopoulos & Paliouras)",
+    "source": "https://github.com/MWiechmann/enron_spam_data/raw/master/enron_spam_data.zip",
+    "rows": 30493,
+    "spam": 14583,
+    "ham": 15910,
+    "test_size": 0.2,
+    "random_state": 42
+  },
+  "trained_at": "2026-08-19T17:14:44.068846+00:00Z"
+}
