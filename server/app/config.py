@@ -5,14 +5,14 @@ All secrets and environment-specific settings are read from environment
 variables / a `.env` file (never hardcoded). See `.env.example` for the full
 list of supported variables.
 """
-import os
+
 from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+import os
 # server/app/config.py -> server/ directory (2 levels up)
 BASE_DIR = Path(__file__).resolve().parents[1]
 ENV_FILE = BASE_DIR / ".env"
